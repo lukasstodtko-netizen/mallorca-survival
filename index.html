@@ -295,7 +295,8 @@ body::before{display:none}
 html{height:100%;height:100vh;height:100lvh}
 body{inset:auto;top:0;left:0;right:0;height:100vh;height:100lvh}
 /* Bajo la isla dinámica: franja navy sólida que se funde con el patrón; iOS no tiene nada que desenfocar. */
-.top::before{inset:0 0 auto;height:calc(var(--sa-t,env(safe-area-inset-top,0px)) + 30px);background:linear-gradient(#0f1d30 calc(100% - 30px),rgba(15,29,48,0));-webkit-mask-image:none;mask-image:none}
+/* Sin franja ni degradado arriba: el patrón llega hasta el borde superior. */
+.top::before{display:none}
 .top{padding-top:calc(16px + var(--sa-t,env(safe-area-inset-top,0px)))}
 .inner{padding-top:calc(110px + var(--sa-t,env(safe-area-inset-top,0px)))}
 .hero{padding-top:calc(84px + var(--sa-t,env(safe-area-inset-top,0px)))}
