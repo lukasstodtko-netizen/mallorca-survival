@@ -1,5 +1,5 @@
 // Mallorca Survival · service worker: la app funciona sin cobertura en ruta.
-const VERSION = 'ms27-v1';
+const VERSION = 'ms27-v2';
 const CORE = ['./','index.html','app.css','app.js','assets/route.json','assets/logo.png','assets/survival-waves-tile.jpg',
   'assets/fonts/glacial-400.woff2','assets/fonts/glacial-700.woff2','manifest.webmanifest','icon-192.png',
   'assets/maillot/1.jpg','assets/maillot/2.jpg','assets/maillot/3.jpg','assets/maillot/4.jpg','assets/maillot/5.jpg','assets/maillot/6.jpg','assets/maillot/7.jpg','assets/maillot/8.jpg',
