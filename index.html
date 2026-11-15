@@ -264,7 +264,7 @@ body::before{content:"";position:fixed;inset:0;top:calc(-1 * var(--sa-t,env(safe
 /* Pantalla completa en iPhone: el fondo cubre todo (isla dinámica, barra inferior) y el patrón se ve nítido. */
 :root{
   --pat:url("assets/survival-waves-tile.jpg");
-  --pat-size:504.67px 1066.67px;
+  --pat-size:451.33px 1013.33px;
   --bg:linear-gradient(rgba(36,35,36,.62),rgba(36,35,36,.62)),var(--pat) 0 0/var(--pat-size) repeat;
 }
 html{min-height:100%;background:#2a2730;background:var(--bg)}
@@ -290,6 +290,17 @@ body::before{display:none}
 .herofoot{gap:14px}
 .stats{padding-top:14px}
 @media(max-height:760px){.event-edition{display:none}.hero h1{font-size:clamp(44px,11vw,72px)}}
+
+/* iPhone: la app ocupa toda la pantalla, también la franja inferior (sin borde negro). */
+html{height:100%;height:100vh;height:100lvh}
+body{inset:auto;top:0;left:0;right:0;height:100vh;height:100lvh}
+/* Bajo la isla dinámica: franja navy sólida que se funde con el patrón; iOS no tiene nada que desenfocar. */
+.top::before{inset:0 0 auto;height:calc(var(--sa-t,env(safe-area-inset-top,0px)) + 30px);background:linear-gradient(#0f1d30 calc(100% - 30px),rgba(15,29,48,0));-webkit-mask-image:none;mask-image:none}
+.top{padding-top:calc(16px + var(--sa-t,env(safe-area-inset-top,0px)))}
+.inner{padding-top:calc(110px + var(--sa-t,env(safe-area-inset-top,0px)))}
+.hero{padding-top:calc(84px + var(--sa-t,env(safe-area-inset-top,0px)))}
+/* Isla más grande: ocupa todo el ancho de la pantalla. */
+#heroStage{width:calc(100% + 36px);margin:0 -18px;align-self:stretch;min-height:240px}
 
 /* Indicador de secciones: sigue el deslizamiento y permite pasar página aunque el dedo esté sobre el mapa. */
 #pager{scroll-behavior:auto;touch-action:pan-x pan-y}
@@ -340,7 +351,7 @@ body::before{display:none}
           </div>
           <div class="blocks" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="count"><span class="muted small">El ferry sale en</span><b class="num" id="count"></b></div>
-          <div class="swipehint"><button class="hero-route" type="button" data-go="ruta">Descubre la ruta <span aria-hidden="true">↗</span></button></div>
+          <div class="swipehint"><button class="hero-route" type="button" data-go="ruta">Descubre la ruta <span aria-hidden="true">↗︎</span></button></div>
         </div>
       </div>
     </section>
@@ -352,7 +363,7 @@ body::before{display:none}
         <div id="routeStage" class="stage">
           <div id="labels"></div>
           <div class="stagebar">
-            <button class="btn fill" id="fly" type="button">▶ Volar la ruta</button>
+            <button class="btn fill" id="fly" type="button">▶︎ Volar la ruta</button>
             <button class="btn" id="home" type="button">Vista inicial</button>
           </div>
         </div>
@@ -437,7 +448,7 @@ body::before{display:none}
         <div class="phead"><div class="eyebrow">Maillot del evento</div><h2>Mallorca Survival × Gobik</h2></div>
         <div id="turn" aria-label="Maillot, arrastra para girar" role="img">
           <img id="jimg" alt="Maillot mdnss Mallorca Survival" draggable="false">
-          <div class="hint">↔ Arrastra para girar</div>
+          <div class="hint">↔︎ Arrastra para girar</div>
         </div>
         <div class="dots" id="dots" aria-hidden="true"></div>
         <p class="muted small">Maillot CX de manga corta, incluido en la inscripción. Diseño provisional (opción B, versión 1).</p>
@@ -740,17 +751,16 @@ const PRICE = '';
   }
   function heroCam(){
     if (!heroCenter) return;
-    const direction = new THREE.Vector3(Math.sin(heroA), .65, Math.cos(heroA)).normalize();
-    const right = new THREE.Vector3(Math.cos(heroA), 0, -Math.sin(heroA));
-    const up = new THREE.Vector3().crossVectors(direction, right);
-    const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov/2)), tanH = tanV*camera.aspect;
-    let distance = 0;
-    heroCorners.forEach(point => {
-      const offset = point.clone().sub(heroCenter), depth = offset.dot(direction);
-      distance = Math.max(distance, depth + Math.abs(offset.dot(right))/tanH, depth + Math.abs(offset.dot(up))/tanV);
-    });
-    camera.position.copy(heroCenter).addScaledVector(direction, distance*1.08);
-    camera.lookAt(heroCenter);
+    // Encaje real: se proyecta la costa en pantalla y se ajusta la distancia (dos pasadas).
+    const dir = new THREE.Vector3(Math.sin(heroA), .62, Math.cos(heroA)).normalize(), v = new THREE.Vector3();
+    let dist = 140;
+    for (let pass = 0; pass < 2; pass++) {
+      camera.position.copy(heroCenter).addScaledVector(dir, dist); camera.lookAt(heroCenter); camera.updateMatrixWorld();
+      let mx = 0, my = 0;
+      heroCorners.forEach(p => { v.copy(p).project(camera); mx = Math.max(mx, Math.abs(v.x)); my = Math.max(my, Math.abs(v.y)); });
+      dist *= Math.max(mx, my) / .96;
+    }
+    camera.position.copy(heroCenter).addScaledVector(dir, dist); camera.lookAt(heroCenter);
   }
   function homeCam(){ const k = camera.aspect < 1 ? 1.22 : 1; camera.position.set(-10*k, 92*k, 78*k); controls.target.set(0,0,3); controls.update(); }
   function flyCam(dt){
@@ -777,11 +787,11 @@ const PRICE = '';
   function startFly(){
     if (!renderer) return;
     flyT = 0; cur = 0; controls.enabled = false; camPos.copy(camera.position); camTgt.copy(controls.target);
-    $('fly').textContent = '■ Parar'; kick();
+    $('fly').textContent = '■︎ Parar'; kick();
   }
   function stopFly(){
     if (flyT < 0) return;
-    flyT = -1; $('fly').textContent = '▶ Volar la ruta';
+    flyT = -1; $('fly').textContent = '▶︎ Volar la ruta';
     if (controls){ controls.enabled = mode === 'route'; homeCam(); } render();
   }
   $('fly').addEventListener('click', () => { flyT >= 0 ? stopFly() : startFly(); });
