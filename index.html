@@ -303,6 +303,32 @@ body{inset:auto;top:0;left:0;right:0;height:100vh;height:100lvh}
 /* Isla más grande: ocupa todo el ancho de la pantalla. */
 #heroStage{width:calc(100% + 36px);margin:0 -18px;align-self:stretch;min-height:240px}
 
+/* Historia del evento en la portada */
+.hero-links{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.route-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 4px;background:none;border:0;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.route-link span{color:var(--salmon);font-size:18px}
+/* El contenido se desvanece antes de llegar a la cabecera; el patrón de fondo sigue nítido hasta arriba. */
+.page{-webkit-mask-image:linear-gradient(transparent calc(var(--sa-t,env(safe-area-inset-top,0px)) + 62px),#000 calc(var(--sa-t,env(safe-area-inset-top,0px)) + 92px));mask-image:linear-gradient(transparent calc(var(--sa-t,env(safe-area-inset-top,0px)) + 62px),#000 calc(var(--sa-t,env(safe-area-inset-top,0px)) + 92px))}
+.story-facts{list-style:none;padding-left:0}
+.story-cue{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px;margin-top:-2px;border:1px solid rgba(255,255,255,.55);border-radius:999px;background:rgba(15,29,48,.55);font-size:14px;font-weight:700;letter-spacing:.02em}
+.story-cue span{color:var(--salmon);font-size:16px}
+.story{padding:8px calc(16px + var(--sa-r,env(safe-area-inset-right,0px))) calc(96px + var(--sa-b,env(safe-area-inset-bottom,0px))) calc(16px + var(--sa-l,env(safe-area-inset-left,0px)));scroll-margin-top:calc(84px + var(--sa-t,env(safe-area-inset-top,0px)))}
+.story-in{max-width:680px;margin:0 auto;background:rgba(15,29,48,.94);border-left:3px solid var(--salmon);border-radius:3px 22px 22px 3px;padding:30px 22px 26px;display:flex;flex-direction:column;gap:18px}
+.story .eyebrow{color:var(--blue);font-size:12px;letter-spacing:.2em}
+.story h2{font-size:clamp(34px,9.6vw,52px);line-height:.98;letter-spacing:-.03em;text-transform:uppercase}
+.story p{font-size:17px;line-height:1.6;color:#dbe3ee;max-width:36em}
+.story .story-lead{font-size:20px;line-height:1.5;color:var(--white)}
+.story-facts{display:grid;grid-template-columns:repeat(3,1fr);margin:6px 0;padding:16px 0;border-top:1px solid rgba(196,210,240,.28);border-bottom:1px solid rgba(196,210,240,.28)}
+.story-facts li{min-width:0}
+.story-facts li + li{padding-left:14px;border-left:1px solid rgba(196,210,240,.2)}
+.story-facts b{display:block;font-size:clamp(26px,7.4vw,36px);line-height:1;letter-spacing:-.03em;color:var(--salmon)}
+.story-facts span{display:block;margin-top:6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.story-close{margin:8px 0 0;font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-.01em}
+.story-close .blocks{width:72px;height:4px;margin-bottom:14px}
+.story-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.story-actions .btn{min-height:52px}
+@media(max-width:360px){.story-actions{grid-template-columns:1fr}.story-facts li + li{padding-left:8px}}
+
 /* Indicador de secciones: sigue el deslizamiento y permite pasar página aunque el dedo esté sobre el mapa. */
 #pager{scroll-behavior:auto;touch-action:pan-x pan-y}
 .pnav{position:absolute;z-index:25;left:50%;bottom:calc(10px + var(--sa-b,env(safe-area-inset-bottom,0px)));transform:translateX(-50%);display:flex;align-items:center;gap:2px;padding:3px;background:rgba(15,29,48,.94);border:1px solid rgba(196,210,240,.28);border-radius:999px;box-shadow:0 10px 30px rgba(5,12,24,.35)}
@@ -352,9 +378,33 @@ body{inset:auto;top:0;left:0;right:0;height:100vh;height:100lvh}
           </div>
           <div class="blocks" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="count"><span class="muted small">El ferry sale en</span><b class="num" id="count"></b></div>
-          <div class="swipehint"><button class="hero-route" type="button" data-go="ruta">Descubre la ruta <span aria-hidden="true">↗︎</span></button></div>
+          <div class="hero-links">
+            <button class="story-cue" id="storyCue" type="button">¿De qué va? <span aria-hidden="true">↓</span></button>
+            <button class="route-link" type="button" data-go="ruta">La ruta <span aria-hidden="true">↗︎</span></button>
+          </div>
         </div>
       </div>
+
+      <article class="story" id="story">
+        <div class="story-in">
+          <div class="eyebrow">La experiencia</div>
+          <h2>Una isla entera.<br>Un solo día.</h2>
+          <p class="story-lead">El viernes por la noche subimos las bicis al ferry en Barcelona. Dormimos poco, hablamos mucho y a las 05:30 Mallorca nos recibe todavía a oscuras. Un café, los últimos nervios y, a las 06:30, salimos de Palma.</p>
+          <p>Primero, la Tramuntana: la carretera colgada sobre el mar de Andratx a Sóller, el día abriéndose sobre Valldemossa y Deià, y la subida al Puig Major, el techo de la vuelta a 871 metros. Después, Lluc, Pollença y Alcúdia. Luego, toda la costa este hasta Santanyí. Y al final, el sur llano que nos devuelve a Palma.</p>
+          <ul class="story-facts num" aria-label="La vuelta en cifras">
+            <li><b>301,6</b><span>kilómetros</span></li>
+            <li><b>3.830</b><span>metros de desnivel</span></li>
+            <li><b>1</b><span>día</span></li>
+          </ul>
+          <p>No es una carrera. Es una locura compartida. Rodamos en dos grupos, con furgoneta de apoyo y cuatro avituallamientos, y nadie hace la vuelta solo.</p>
+          <p>Cuando volvamos a entrar en Palma habremos dado la vuelta a una isla entera. Lo que pase entre medias son las historias que contaremos durante años.</p>
+          <blockquote class="story-close"><div class="blocks" aria-hidden="true"><i></i><i></i><i></i></div>Porque al final, Madness son las personas.</blockquote>
+          <div class="story-actions">
+            <button class="btn fill" type="button" data-go="inscripcion">Quiero estar</button>
+            <button class="btn" type="button" data-go="ruta">Ver la ruta</button>
+          </div>
+        </div>
+      </article>
     </section>
 
     <!-- RUTA -->
@@ -554,6 +604,7 @@ const PRICE = '';
   }
   tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (b){ go(+b.dataset.i, true); navigation.querySelector('summary').focus(); } });
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(PAGES.findIndex(p => p[0] === b.dataset.go), true)));
+  $('storyCue').addEventListener('click', () => $('story').scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'}));
   // Deslizar: el indicador sigue al dedo en directo; la página solo «cambia» (3D, hash, menú)
   // cuando el carrusel se ha detenido, así el gesto nunca se entrecorta.
   const pnav = $('pnav'), pdots = $('pdots'), pname = $('pname');
